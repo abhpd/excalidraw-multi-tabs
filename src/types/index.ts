@@ -1,6 +1,8 @@
 import type { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
 import type { AppState } from '@excalidraw/excalidraw/types';
 
+export type AppTheme = 'light' | 'dark';
+
 export interface ITab {
   id: number;
   title: string;
@@ -11,4 +13,7 @@ export interface ITab {
 export interface AppData {
   tabs: ITab[];
   currentTabId: number;
+  theme?: AppTheme;
 }
+
+
