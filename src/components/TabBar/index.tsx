@@ -1,5 +1,4 @@
 import { RestrictToHorizontalAxis } from '@dnd-kit/abstract/modifiers';
-import { PointerActivationConstraints, PointerSensor } from '@dnd-kit/dom';
 import { RestrictToElement } from '@dnd-kit/dom/modifiers';
 import { move } from '@dnd-kit/helpers';
 import { type DragDropEventHandlers, DragDropProvider } from '@dnd-kit/react';
