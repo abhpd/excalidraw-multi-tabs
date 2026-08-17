@@ -24,7 +24,7 @@
     "@dnd-kit/dom": "^0.3.2",
     "@dnd-kit/helpers": "0.3.2",
     "@dnd-kit/react": "0.3.2",
-    "@excalidraw/excalidraw": "0.18.0",
+    "@excalidraw/excalidraw": "^0.18.1",
     "@hookform/resolvers": "^5.2.2",
     "@tailwindcss/vite": "^4.1.13",
     "axios": "^1.12.2",
