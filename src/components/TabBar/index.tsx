@@ -1,17 +1,19 @@
 import { RestrictToHorizontalAxis } from '@dnd-kit/abstract/modifiers';
+import { PointerActivationConstraints, PointerSensor } from '@dnd-kit/dom';
 import { RestrictToElement } from '@dnd-kit/dom/modifiers';
 import { move } from '@dnd-kit/helpers';
 import { type DragDropEventHandlers, DragDropProvider } from '@dnd-kit/react';
 import { useRef } from 'react';
 
 import { useAppStore } from '../../store';
-import { PlusIcon } from '../icons';
+import { MoonIcon, PlusIcon, SunIcon } from '../icons';
 import ImportModal from '../ImportButton';
 import Tab from '../Tab';
 import style from './style.module.css';
 
 const TabBar = () => {
-  const { tabs, setCurrentTabId, createTab, setTabs } = useAppStore();
+  const { tabs, setCurrentTabId, createTab, setTabs, theme, toggleTheme } =
+    useAppStore();
   const tabBarRef = useRef<HTMLDivElement>(null);
 
   const handleCreateTabBtnClick = () => {
@@ -47,13 +49,26 @@ const TabBar = () => {
         <button
           className={style.createTabButton}
           onClick={handleCreateTabBtnClick}
+          title="New Tab"
+          aria-label="New Tab"
         >
           <PlusIcon />
         </button>
-        <ImportModal />
+        <div className={style.actionsRight}>
+          <button
+            className={style.themeToggleButton}
+            onClick={toggleTheme}
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+          </button>
+          <ImportModal />
+        </div>
       </div>
     </>
   );
 };
 
 export default TabBar;
+

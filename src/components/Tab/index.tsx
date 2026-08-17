@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 
 import { useAppStore } from '../../store';
 import type { ITab } from '../../types';
-import { TrashIcon } from '../icons';
+import { GripIcon, TrashIcon } from '../icons';
 import styles from './style.module.css';
 
 interface TabProps {
@@ -25,7 +25,7 @@ const Tab = ({ tab, index }: TabProps) => {
     defaultValues: { title: tab.title },
   });
 
-  const { ref, isDragging } = useSortable({
+  const { ref, handleRef, isDragging } = useSortable({
     id: tab.id,
     index,
     group: 'tabs',
@@ -53,6 +53,12 @@ const Tab = ({ tab, index }: TabProps) => {
     reset({ title: tab.title });
   };
 
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsEditing(true);
+    reset({ title: tab.title });
+  };
+
   const onSubmit = (data: FormData) => {
     const trimmedTitle = data.title.trim();
     if (trimmedTitle && trimmedTitle !== tab.title) {
@@ -76,17 +82,28 @@ const Tab = ({ tab, index }: TabProps) => {
       })}
       onClick={() => setCurrentTabId(tab.id)}
     >
+      <button
+        ref={handleRef}
+        type="button"
+        className={styles.dragHandle}
+        title="Drag to reorder tab"
+        aria-label="Drag to reorder tab"
+      >
+        <GripIcon />
+      </button>
+
       {!isEditing && (
         <span
           className={clsx(styles.title, { [styles.active]: isActive })}
           onClick={handleTitleClick}
+          onDoubleClick={handleDoubleClick}
           title={tab.title}
         >
           {tab.title}
         </span>
       )}
       {isEditing && (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.editForm}>
           <input
             {...register('title')}
             className={styles.titleInput}
@@ -104,8 +121,11 @@ const Tab = ({ tab, index }: TabProps) => {
       )}
       {isActive && (
         <button
-          className={clsx({ [styles.active]: isActive })}
+          type="button"
+          className={styles.deleteButton}
           onClick={handleDelete}
+          title="Delete tab"
+          aria-label="Delete tab"
         >
           <TrashIcon />
         </button>
@@ -115,3 +135,4 @@ const Tab = ({ tab, index }: TabProps) => {
 };
 
 export default Tab;
+

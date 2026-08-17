@@ -1,40 +1,67 @@
 .tab {
   align-items: center;
   background-color: transparent;
-  border-radius: 6px;
-  min-width: 80px;
-  max-width: 300px;
-  cursor: grab;
+  border-radius: 5px;
+  min-width: 60px;
+  max-width: 200px;
+  cursor: pointer;
   display: flex;
   font-weight: 400;
-  gap: 10px;
+  gap: 4px;
   font-size: 12px;
-  height: 36px;
-  padding: 10px;
+  height: 28px;
+  padding: 0 6px 0 4px;
   user-select: none;
-  color: #1b1b1f; /*--text-primary-color*/
+  color: var(--text-primary-color);
+  transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background-color: #f1f0ff; /*--button-hover-bg*/
+    background-color: var(--button-hover-bg);
+
+    .dragHandle {
+      opacity: 0.6;
+    }
   }
 
   &.active {
-    background-color: #e0dfff; /*--color-surface-primary-container*/
+    background-color: var(--color-surface-primary-container);
+    font-weight: 500;
+
+    .dragHandle {
+      opacity: 0.75;
+    }
   }
 
   &.dragging {
-    opacity: 0.5;
-    z-index: 1;
+    opacity: 0.4;
+    z-index: 10;
+  }
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary-color);
+  opacity: 0.25;
+  cursor: grab;
+  border-radius: 3px;
+  padding: 0;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    opacity: 1 !important;
+    background-color: var(--sidebar-border-color);
   }
 
-  & button {
-    border-radius: 4px;
-    cursor: pointer;
-    padding: 4px;
-
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.1);
-    }
+  &:active {
+    cursor: grabbing;
+    opacity: 1 !important;
   }
 }
 
@@ -43,21 +70,52 @@
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  cursor: pointer;
+  line-height: 28px;
+}
 
-  &.active {
-    cursor: text;
-  }
+.editForm {
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 .titleInput {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-primary-color);
+  border: 1px solid var(--input-border);
+  border-radius: 3px;
   width: 100%;
   outline: none;
-  padding: 2px 4px;
+  padding: 1px 4px;
+  font-size: 12px;
+  height: 22px;
 
   &:focus {
-    border-color: #6965db;
+    border-color: var(--color-primary);
   }
 }
+
+.deleteButton {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary-color);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.55;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    opacity: 1;
+    background-color: var(--sidebar-border-color);
+  }
+}
+
+
