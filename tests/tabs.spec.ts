@@ -204,26 +204,58 @@ test.describe('Tab Management', () => {
     }, { timeout: 10000 }).toEqual({ t1: true, t2: true });
   });
 
-  test('reorder tabs via drag handle', async ({ page }) => {
+  test('reorder tabs via drag handle with varied label lengths', async ({ page }) => {
+    // Tab 1: Rename to a very long label
+    const tab1 = page.getByTestId('tab').first();
+    await tab1.getByTestId('tab-title').dblclick();
+    const input1 = tab1.getByTestId('tab-title-input');
+    await input1.fill('Extremely Long Diagram Name For System Architecture');
+    await input1.press('Enter');
+
+    // Tab 2: Create and rename to short label
     await page.getByTestId('new-tab-button').click();
     const tabs = page.getByTestId('tab');
     await expect(tabs).toHaveCount(2);
+    const tab2 = tabs.nth(1);
+    await tab2.getByTestId('tab-title').dblclick();
+    const input2 = tab2.getByTestId('tab-title-input');
+    await input2.fill('A');
+    await input2.press('Enter');
 
-    // Drag Tab 2 handle over Tab 1
-    const grip2 = tabs.nth(1).getByTestId('tab-drag-handle');
-    const grip1 = tabs.nth(0).getByTestId('tab-drag-handle');
+    // 1. Drag Tab 2 (right) left over Tab 1 (left)
+    const grip1 = page.getByTestId('tab').nth(0).getByTestId('tab-drag-handle');
+    const grip2 = page.getByTestId('tab').nth(1).getByTestId('tab-drag-handle');
 
-    const box1 = await grip1.boundingBox();
-    const box2 = await grip2.boundingBox();
+    let box1 = await grip1.boundingBox();
+    let box2 = await grip2.boundingBox();
 
     if (box1 && box2) {
       await page.mouse.move(box2.x + box2.width / 2, box2.y + box2.height / 2);
       await page.mouse.down();
-      await page.mouse.move(box1.x, box1.y + box1.height / 2, { steps: 10 });
+      await page.mouse.move(box1.x + 20, box1.y + box1.height / 2, { steps: 20 });
       await page.mouse.up();
     }
 
-    // Tab bar should still be functional and render 2 tabs
-    await expect(page.getByTestId('tab')).toHaveCount(2);
+    // 1. Verify order swapped in DOM: ['A', 'Extremely Long...']
+    await expect(page.getByTestId('tab').nth(0).getByTestId('tab-title')).toHaveText('A');
+    await expect(page.getByTestId('tab').nth(1).getByTestId('tab-title')).toHaveText('Extremely Long Diagram Name For System Architecture');
+
+    // 2. Drag Tab 2 (now the long tab on the right) back to the left over Tab 1
+    const secondGripLong = page.getByTestId('tab').nth(1).getByTestId('tab-drag-handle');
+    const firstGripShort = page.getByTestId('tab').nth(0).getByTestId('tab-drag-handle');
+
+    box1 = await firstGripShort.boundingBox();
+    box2 = await secondGripLong.boundingBox();
+
+    if (box1 && box2) {
+      await page.mouse.move(box2.x + box2.width / 2, box2.y + box2.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(box1.x + 15, box1.y + box1.height / 2, { steps: 25 });
+      await page.mouse.up();
+    }
+
+    // Verify order swapped back in DOM
+    await expect(page.getByTestId('tab').nth(0).getByTestId('tab-title')).toHaveText('Extremely Long Diagram Name For System Architecture');
+    await expect(page.getByTestId('tab').nth(1).getByTestId('tab-title')).toHaveText('A');
   });
 });

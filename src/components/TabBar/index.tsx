@@ -1,5 +1,4 @@
 import { RestrictToHorizontalAxis } from '@dnd-kit/abstract/modifiers';
-import { RestrictToElement } from '@dnd-kit/dom/modifiers';
 import { move } from '@dnd-kit/helpers';
 import { type DragDropEventHandlers, DragDropProvider } from '@dnd-kit/react';
 import { useRef } from 'react';
@@ -34,10 +33,7 @@ const TabBar = () => {
       <div className={style.container} data-testid="tab-bar-container">
         <DragDropProvider
           onDragEnd={handleDragEnd}
-          modifiers={[
-            RestrictToHorizontalAxis,
-            RestrictToElement.configure({ element: tabBarRef.current }),
-          ]}
+          modifiers={[RestrictToHorizontalAxis]}
         >
           <div className={style.tabBar} ref={tabBarRef} data-testid="tab-bar">
             {tabs.map((tab, index) => (
