@@ -27,13 +27,6 @@ const ImportModal = () => {
     
     const targetUrl = urlToSubmit || url;
 
-    try {
-      new URL(targetUrl);
-    } catch {
-      setError(INVALID_EXCALIDRAW_LINK);
-      return;
-    }
-
     if (!targetUrl.startsWith(EXCALIDRAW_URL)) {
       setError(INVALID_EXCALIDRAW_LINK);
       return;

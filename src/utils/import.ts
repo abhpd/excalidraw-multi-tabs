@@ -1,10 +1,7 @@
 import { decompressData } from './encode';
 
 export const getExcalidrawBoard = async (url: string) => {
-  const frag = url.split('#')[1];
-
-  const jsonParam = new URLSearchParams(frag).get('json') || '';
-  const [fileKey, privateKey] = jsonParam.split(',');
+  const [fileKey, privateKey] = url.split('#json=')[1]?.split(',') || [];
 
   const response = await fetch(`https://json.excalidraw.com/api/v2/${fileKey}`);
   const arrayBuffer = await response.arrayBuffer();

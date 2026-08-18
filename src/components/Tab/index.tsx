@@ -45,12 +45,6 @@ const Tab = ({ tab, index }: TabProps) => {
     setTitle(tab.title);
   };
 
-  const handleDoubleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsEditing(true);
-    setTitle(tab.title);
-  };
-
   const onSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const trimmedTitle = title.trim();
@@ -94,7 +88,6 @@ const Tab = ({ tab, index }: TabProps) => {
           data-testid="tab-title"
           className={clsx(styles.title, { [styles.active]: isActive })}
           onClick={handleTitleClick}
-          onDoubleClick={handleDoubleClick}
           title={tab.title}
         >
           {tab.title}
