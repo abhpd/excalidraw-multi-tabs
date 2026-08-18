@@ -1,7 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { type AppData, type AppTheme, getRandomTabColor, type ITab } from '../types';
+import {
+  type AppData,
+  type AppTheme,
+  getRandomTabColor,
+  type ITab,
+} from '../types';
 
 interface AppStoreState extends AppData {
   theme: AppTheme;
@@ -47,9 +52,10 @@ export const useAppStore = create<AppStoreState>()(
 
       setTheme: (theme: AppTheme) => set({ theme }),
 
-      toggleTheme: () => set((state) => ({ 
-        theme: state.theme === 'dark' ? 'light' : 'dark' 
-      })),
+      toggleTheme: () =>
+        set((state) => ({
+          theme: state.theme === 'dark' ? 'light' : 'dark',
+        })),
 
       setCurrentTabId: (id: number) => set({ currentTabId: id }),
 
@@ -75,32 +81,34 @@ export const useAppStore = create<AppStoreState>()(
         return newTabId;
       },
 
-      updateTab: (id: number, updatedTab: Partial<ITab>) => set((state) => ({
-        tabs: state.tabs.map((tab) =>
-          tab.id !== id ? tab : { ...tab, ...updatedTab }
-        ),
-      })),
+      updateTab: (id: number, updatedTab: Partial<ITab>) =>
+        set((state) => ({
+          tabs: state.tabs.map((tab) =>
+            tab.id !== id ? tab : { ...tab, ...updatedTab },
+          ),
+        })),
 
       setTabs: (tabs: ITab[]) => set({ tabs }),
 
-      deleteTab: (tabId: number) => set((state) => {
-        if (state.tabs.length === 1) return state;
+      deleteTab: (tabId: number) =>
+        set((state) => {
+          if (state.tabs.length === 1) return state;
 
-        const delTabIndex = state.tabs.findIndex((tab) => tab.id === tabId);
-        const newTabs = [...state.tabs];
-        newTabs.splice(delTabIndex, 1);
+          const delTabIndex = state.tabs.findIndex((tab) => tab.id === tabId);
+          const newTabs = [...state.tabs];
+          newTabs.splice(delTabIndex, 1);
 
-        const newCurrentTabId =
-          delTabIndex > 0 ? newTabs[delTabIndex - 1].id : newTabs[0].id;
+          const newCurrentTabId =
+            delTabIndex > 0 ? newTabs[delTabIndex - 1].id : newTabs[0].id;
 
-        return {
-          tabs: newTabs,
-          currentTabId: newCurrentTabId,
-        };
-      }),
+          return {
+            tabs: newTabs,
+            currentTabId: newCurrentTabId,
+          };
+        }),
     }),
     {
       name: 'excalidraw-tabs-data',
-    }
-  )
+    },
+  ),
 );

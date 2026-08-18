@@ -33,7 +33,9 @@ test.describe('Import Flow', () => {
 
   test('handles network failure during board fetch', async ({ page }) => {
     // Intercept excalidraw API call and fail it
-    await page.route('https://json.excalidraw.com/**', (route) => route.abort());
+    await page.route('https://json.excalidraw.com/**', (route) =>
+      route.abort(),
+    );
 
     await page.getByTestId('import-modal-button').click();
     const input = page.getByTestId('import-url-input');
@@ -45,7 +47,9 @@ test.describe('Import Flow', () => {
     await expect(errorMsg).toBeVisible();
   });
 
-  test('successfully imports an Excalidraw board with encrypted payload', async ({ page }) => {
+  test('successfully imports an Excalidraw board with encrypted payload', async ({
+    page,
+  }) => {
     // Generate valid 128-bit base64url AES-GCM key (22 chars)
     const privateKey = 'abcdefghijklmnopqrstuv';
     const mockBoardData = {
@@ -71,77 +75,92 @@ test.describe('Import Flow', () => {
     };
 
     // Construct valid Excalidraw binary format (version + chunks -> deflate -> AES-GCM encrypt)
-    const payload = await page.evaluate(async ({ mockBoardData, privateKey }) => {
-      // Helper to pack chunks in Excalidraw binary format
-      const packChunks = (chunks: Uint8Array[]) => {
-        const totalSize = 4 + chunks.reduce((sum, c) => sum + 4 + c.byteLength, 0);
-        const buffer = new Uint8Array(totalSize);
-        const view = new DataView(buffer.buffer);
-        view.setUint32(0, 2); // Version 2
-        let offset = 4;
-        for (const chunk of chunks) {
-          view.setUint32(offset, chunk.byteLength);
-          offset += 4;
-          buffer.set(chunk, offset);
-          offset += chunk.byteLength;
-        }
-        return buffer;
-      };
+    const payload = await page.evaluate(
+      async ({ mockBoardData, privateKey }) => {
+        // Helper to pack chunks in Excalidraw binary format
+        const packChunks = (chunks: Uint8Array[]) => {
+          const totalSize =
+            4 + chunks.reduce((sum, c) => sum + 4 + c.byteLength, 0);
+          const buffer = new Uint8Array(totalSize);
+          const view = new DataView(buffer.buffer);
+          view.setUint32(0, 2); // Version 2
+          let offset = 4;
+          for (const chunk of chunks) {
+            view.setUint32(offset, chunk.byteLength);
+            offset += 4;
+            buffer.set(chunk, offset);
+            offset += chunk.byteLength;
+          }
+          return buffer;
+        };
 
-      const enc = new TextEncoder();
-      const meta = enc.encode('{}');
-      const data = enc.encode(JSON.stringify(mockBoardData));
-      const inner = packChunks([meta, data]);
+        const enc = new TextEncoder();
+        const meta = enc.encode('{}');
+        const data = enc.encode(JSON.stringify(mockBoardData));
+        const inner = packChunks([meta, data]);
 
-      // Simple pako-compatible or raw deflate via browser CompressionStream
-      const cs = new CompressionStream('deflate');
-      const writer = cs.writable.getWriter();
-      writer.write(inner);
-      writer.close();
-      const compressedBuffer = await new Response(cs.readable).arrayBuffer();
+        // Simple pako-compatible or raw deflate via browser CompressionStream
+        const cs = new CompressionStream('deflate');
+        const writer = cs.writable.getWriter();
+        writer.write(inner);
+        writer.close();
+        const compressedBuffer = await new Response(cs.readable).arrayBuffer();
 
-      const iv = new Uint8Array(12);
-      crypto.getRandomValues(iv);
+        const iv = new Uint8Array(12);
+        crypto.getRandomValues(iv);
 
-      const cryptoKey = await crypto.subtle.importKey(
-        'jwk',
-        {
-          alg: 'A128GCM',
-          ext: true,
-          k: privateKey,
-          key_ops: ['encrypt', 'decrypt'],
-          kty: 'oct',
-        },
-        { name: 'AES-GCM', length: 128 },
-        false,
-        ['encrypt'],
-      );
+        const cryptoKey = await crypto.subtle.importKey(
+          'jwk',
+          {
+            alg: 'A128GCM',
+            ext: true,
+            k: privateKey,
+            key_ops: ['encrypt', 'decrypt'],
+            kty: 'oct',
+          },
+          { name: 'AES-GCM', length: 128 },
+          false,
+          ['encrypt'],
+        );
 
-      const encrypted = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv },
-        cryptoKey,
-        compressedBuffer,
-      );
+        const encrypted = await crypto.subtle.encrypt(
+          { name: 'AES-GCM', iv },
+          cryptoKey,
+          compressedBuffer,
+        );
 
-      const encodingHeader = enc.encode(
-        JSON.stringify({ version: 2, compression: 'pako@1', encryption: 'AES-GCM' }),
-      );
+        const encodingHeader = enc.encode(
+          JSON.stringify({
+            version: 2,
+            compression: 'pako@1',
+            encryption: 'AES-GCM',
+          }),
+        );
 
-      const finalBinary = packChunks([encodingHeader, iv, new Uint8Array(encrypted)]);
-      return Array.from(finalBinary);
-    }, { mockBoardData, privateKey });
+        const finalBinary = packChunks([
+          encodingHeader,
+          iv,
+          new Uint8Array(encrypted),
+        ]);
+        return Array.from(finalBinary);
+      },
+      { mockBoardData, privateKey },
+    );
 
     const binaryBuffer = Buffer.from(payload);
     const fileId = 'mock-board-file-id';
 
     // Mock Excalidraw backend API
-    await page.route(`https://json.excalidraw.com/api/v2/${fileId}`, async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/octet-stream',
-        body: binaryBuffer,
-      });
-    });
+    await page.route(
+      `https://json.excalidraw.com/api/v2/${fileId}`,
+      async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/octet-stream',
+          body: binaryBuffer,
+        });
+      },
+    );
 
     // Run import flow in our app
     await page.getByTestId('import-modal-button').click();
@@ -152,16 +171,23 @@ test.describe('Import Flow', () => {
     // Verify modal closes and new tab is created with title "Imported board"
     await expect(page.getByTestId('tab')).toHaveCount(2);
     const importedTab = page.getByTestId('tab').nth(1);
-    await expect(importedTab.getByTestId('tab-title')).toHaveText('Imported board');
+    await expect(importedTab.getByTestId('tab-title')).toHaveText(
+      'Imported board',
+    );
 
     // Verify the imported element exists in Zustand store
-    await expect.poll(async () => {
-      return await page.evaluate(() => {
-        const raw = localStorage.getItem('excalidraw-tabs-data');
-        if (!raw) return 0;
-        const data = JSON.parse(raw);
-        return data.state?.tabs?.[1]?.elements?.length || 0;
-      });
-    }, { timeout: 10000 }).toBe(1);
+    await expect
+      .poll(
+        async () => {
+          return await page.evaluate(() => {
+            const raw = localStorage.getItem('excalidraw-tabs-data');
+            if (!raw) return 0;
+            const data = JSON.parse(raw);
+            return data.state?.tabs?.[1]?.elements?.length || 0;
+          });
+        },
+        { timeout: 10000 },
+      )
+      .toBe(1);
   });
 });

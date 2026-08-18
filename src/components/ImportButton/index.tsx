@@ -24,7 +24,7 @@ const ImportModal = () => {
 
   const onSubmit = async (e?: React.FormEvent, urlToSubmit?: string) => {
     if (e) e.preventDefault();
-    
+
     const targetUrl = urlToSubmit || url;
 
     if (!targetUrl.startsWith(EXCALIDRAW_URL)) {
@@ -97,7 +97,11 @@ const ImportModal = () => {
                 onSubmit(undefined, pastedValue);
               }}
             />
-            {error && <p className={styles.error} data-testid="import-error-message">{error}</p>}
+            {error && (
+              <p className={styles.error} data-testid="import-error-message">
+                {error}
+              </p>
+            )}
           </div>
         </form>
       </Modal>

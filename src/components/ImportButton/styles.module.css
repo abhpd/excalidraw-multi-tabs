@@ -46,7 +46,9 @@
   margin-top: 0.75rem;
   outline: none;
   padding: 8px 12px;
-  transition: border-color 0.2s, background-color 0.2s;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
   width: 100%;
 
   &:focus {
@@ -59,4 +61,4 @@
   color: #e5484d;
   font-size: 0.825rem;
   margin-top: 0.5rem;
-}
+}

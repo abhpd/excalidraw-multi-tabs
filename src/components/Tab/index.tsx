@@ -129,4 +129,3 @@ const Tab = ({ tab, index }: TabProps) => {
 };
 
 export default Tab;
-

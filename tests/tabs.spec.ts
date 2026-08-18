@@ -23,14 +23,18 @@ test.describe('Tab Management', () => {
     await expect(input).toBeVisible();
     await input.fill('Design Sketch');
     await input.press('Enter');
-    await expect(tabs.nth(1).getByTestId('tab-title')).toHaveText('Design Sketch');
+    await expect(tabs.nth(1).getByTestId('tab-title')).toHaveText(
+      'Design Sketch',
+    );
 
     // Cancel rename via Escape
     await tabs.nth(1).getByTestId('tab-title').dblclick();
     const editInput = tabs.nth(1).getByTestId('tab-title-input');
     await editInput.fill('Will Cancel');
     await editInput.press('Escape');
-    await expect(tabs.nth(1).getByTestId('tab-title')).toHaveText('Design Sketch');
+    await expect(tabs.nth(1).getByTestId('tab-title')).toHaveText(
+      'Design Sketch',
+    );
   });
 
   test('ignore empty or whitespace-only rename', async ({ page }) => {
@@ -57,7 +61,9 @@ test.describe('Tab Management', () => {
     await expect(tabs.nth(1)).not.toHaveClass(/active/);
   });
 
-  test('delete empty tab directly and fall back to remaining tab', async ({ page }) => {
+  test('delete empty tab directly and fall back to remaining tab', async ({
+    page,
+  }) => {
     await page.getByTestId('new-tab-button').click();
     const tabs = page.getByTestId('tab');
     await expect(tabs).toHaveCount(2);
@@ -98,7 +104,11 @@ test.describe('Tab Management', () => {
     });
     // Switch to Tab 1 (which has elements) and delete
     await page.getByTestId('tab').nth(0).click();
-    await page.getByTestId('tab').nth(0).getByTestId('tab-delete-button').click();
+    await page
+      .getByTestId('tab')
+      .nth(0)
+      .getByTestId('tab-delete-button')
+      .click();
     await expect(page.getByTestId('tab')).toHaveCount(1);
   });
 
@@ -121,13 +131,21 @@ test.describe('Tab Management', () => {
     await page.reload();
     const reloadedTabs = page.getByTestId('tab');
     await expect(reloadedTabs).toHaveCount(2);
-    await expect(reloadedTabs.nth(0).getByTestId('tab-title')).toHaveText('Tab 1');
-    await expect(reloadedTabs.nth(1).getByTestId('tab-title')).toHaveText('Tab 2');
+    await expect(reloadedTabs.nth(0).getByTestId('tab-title')).toHaveText(
+      'Tab 1',
+    );
+    await expect(reloadedTabs.nth(1).getByTestId('tab-title')).toHaveText(
+      'Tab 2',
+    );
   });
 
-  test('drawings in separate tabs are isolated and persist across tab switch and reload', async ({ page }) => {
+  test('drawings in separate tabs are isolated and persist across tab switch and reload', async ({
+    page,
+  }) => {
     // 1. Draw a rectangle on Tab 1
-    const rectTool = page.locator('[aria-label*="Rectangle"], [title*="Rectangle"]').first();
+    const rectTool = page
+      .locator('[aria-label*="Rectangle"], [title*="Rectangle"]')
+      .first();
     await rectTool.click();
 
     const canvas = page.locator('.excalidraw canvas').first();
@@ -142,14 +160,19 @@ test.describe('Tab Management', () => {
     }
 
     // Verify Tab 1 has elements in store
-    await expect.poll(async () => {
-      return await page.evaluate(() => {
-        const raw = localStorage.getItem('excalidraw-tabs-data');
-        if (!raw) return 0;
-        const data = JSON.parse(raw);
-        return data.state?.tabs?.[0]?.elements?.length || 0;
-      });
-    }, { timeout: 10000 }).toBeGreaterThan(0);
+    await expect
+      .poll(
+        async () => {
+          return await page.evaluate(() => {
+            const raw = localStorage.getItem('excalidraw-tabs-data');
+            if (!raw) return 0;
+            const data = JSON.parse(raw);
+            return data.state?.tabs?.[0]?.elements?.length || 0;
+          });
+        },
+        { timeout: 10000 },
+      )
+      .toBeGreaterThan(0);
 
     // 2. Create and switch to Tab 2
     await page.getByTestId('new-tab-button').click();
@@ -166,7 +189,9 @@ test.describe('Tab Management', () => {
     expect(tab2Initial).toBe(0);
 
     // 3. Draw a diamond on Tab 2
-    const diamondTool = page.locator('[aria-label*="Diamond"], [title*="Diamond"]').first();
+    const diamondTool = page
+      .locator('[aria-label*="Diamond"], [title*="Diamond"]')
+      .first();
     await diamondTool.click();
 
     if (box) {
@@ -177,34 +202,46 @@ test.describe('Tab Management', () => {
     }
 
     // Verify Tab 2 has elements in store
-    await expect.poll(async () => {
-      return await page.evaluate(() => {
-        const raw = localStorage.getItem('excalidraw-tabs-data');
-        if (!raw) return 0;
-        const data = JSON.parse(raw);
-        return data.state?.tabs?.[1]?.elements?.length || 0;
-      });
-    }, { timeout: 10000 }).toBeGreaterThan(0);
+    await expect
+      .poll(
+        async () => {
+          return await page.evaluate(() => {
+            const raw = localStorage.getItem('excalidraw-tabs-data');
+            if (!raw) return 0;
+            const data = JSON.parse(raw);
+            return data.state?.tabs?.[1]?.elements?.length || 0;
+          });
+        },
+        { timeout: 10000 },
+      )
+      .toBeGreaterThan(0);
 
     // 4. Switch back to Tab 1
     await tabs.nth(0).click();
 
     // 5. Reload page and check that both tabs preserved their distinct elements
     await page.reload();
-    await expect.poll(async () => {
-      return await page.evaluate(() => {
-        const raw = localStorage.getItem('excalidraw-tabs-data');
-        if (!raw) return { t1: false, t2: false };
-        const data = JSON.parse(raw);
-        return {
-          t1: (data.state?.tabs?.[0]?.elements?.length || 0) > 0,
-          t2: (data.state?.tabs?.[1]?.elements?.length || 0) > 0,
-        };
-      });
-    }, { timeout: 10000 }).toEqual({ t1: true, t2: true });
+    await expect
+      .poll(
+        async () => {
+          return await page.evaluate(() => {
+            const raw = localStorage.getItem('excalidraw-tabs-data');
+            if (!raw) return { t1: false, t2: false };
+            const data = JSON.parse(raw);
+            return {
+              t1: (data.state?.tabs?.[0]?.elements?.length || 0) > 0,
+              t2: (data.state?.tabs?.[1]?.elements?.length || 0) > 0,
+            };
+          });
+        },
+        { timeout: 10000 },
+      )
+      .toEqual({ t1: true, t2: true });
   });
 
-  test('reorder tabs via drag handle with varied label lengths', async ({ page }) => {
+  test('reorder tabs via drag handle with varied label lengths', async ({
+    page,
+  }) => {
     // Tab 1: Rename to a very long label
     const tab1 = page.getByTestId('tab').first();
     await tab1.getByTestId('tab-title').dblclick();
@@ -232,17 +269,29 @@ test.describe('Tab Management', () => {
     if (box1 && box2) {
       await page.mouse.move(box2.x + box2.width / 2, box2.y + box2.height / 2);
       await page.mouse.down();
-      await page.mouse.move(box1.x + 20, box1.y + box1.height / 2, { steps: 20 });
+      await page.mouse.move(box1.x + 20, box1.y + box1.height / 2, {
+        steps: 20,
+      });
       await page.mouse.up();
     }
 
     // 1. Verify order swapped in DOM: ['A', 'Extremely Long...']
-    await expect(page.getByTestId('tab').nth(0).getByTestId('tab-title')).toHaveText('A');
-    await expect(page.getByTestId('tab').nth(1).getByTestId('tab-title')).toHaveText('Extremely Long Diagram Name For System Architecture');
+    await expect(
+      page.getByTestId('tab').nth(0).getByTestId('tab-title'),
+    ).toHaveText('A');
+    await expect(
+      page.getByTestId('tab').nth(1).getByTestId('tab-title'),
+    ).toHaveText('Extremely Long Diagram Name For System Architecture');
 
     // 2. Drag Tab 2 (now the long tab on the right) back to the left over Tab 1
-    const secondGripLong = page.getByTestId('tab').nth(1).getByTestId('tab-drag-handle');
-    const firstGripShort = page.getByTestId('tab').nth(0).getByTestId('tab-drag-handle');
+    const secondGripLong = page
+      .getByTestId('tab')
+      .nth(1)
+      .getByTestId('tab-drag-handle');
+    const firstGripShort = page
+      .getByTestId('tab')
+      .nth(0)
+      .getByTestId('tab-drag-handle');
 
     box1 = await firstGripShort.boundingBox();
     box2 = await secondGripLong.boundingBox();
@@ -250,25 +299,39 @@ test.describe('Tab Management', () => {
     if (box1 && box2) {
       await page.mouse.move(box2.x + box2.width / 2, box2.y + box2.height / 2);
       await page.mouse.down();
-      await page.mouse.move(box1.x + 15, box1.y + box1.height / 2, { steps: 25 });
+      await page.mouse.move(box1.x + 15, box1.y + box1.height / 2, {
+        steps: 25,
+      });
       await page.mouse.up();
     }
 
     // Verify order swapped back in DOM
-    await expect(page.getByTestId('tab').nth(0).getByTestId('tab-title')).toHaveText('Extremely Long Diagram Name For System Architecture');
-    await expect(page.getByTestId('tab').nth(1).getByTestId('tab-title')).toHaveText('A');
+    await expect(
+      page.getByTestId('tab').nth(0).getByTestId('tab-title'),
+    ).toHaveText('Extremely Long Diagram Name For System Architecture');
+    await expect(
+      page.getByTestId('tab').nth(1).getByTestId('tab-title'),
+    ).toHaveText('A');
   });
 
-  test('tab assigned color persists in storage and attributes across reload', async ({ page }) => {
+  test('tab assigned color persists in storage and attributes across reload', async ({
+    page,
+  }) => {
     // Check initial tab has a data-color attribute
     const initialTab = page.getByTestId('tab').first();
-    await expect(initialTab).toHaveAttribute('data-color', /default|blue|emerald|amber|purple|rose|cyan/);
+    await expect(initialTab).toHaveAttribute(
+      'data-color',
+      /default|blue|emerald|amber|purple|rose|cyan/,
+    );
     const initialColor = await initialTab.getAttribute('data-color');
 
     // Create a second tab and verify it gets a color
     await page.getByTestId('new-tab-button').click();
     const secondTab = page.getByTestId('tab').nth(1);
-    await expect(secondTab).toHaveAttribute('data-color', /default|blue|emerald|amber|purple|rose|cyan/);
+    await expect(secondTab).toHaveAttribute(
+      'data-color',
+      /default|blue|emerald|amber|purple|rose|cyan/,
+    );
     const secondColor = await secondTab.getAttribute('data-color');
 
     // Reload page and verify colors persist

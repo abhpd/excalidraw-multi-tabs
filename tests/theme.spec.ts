@@ -1,10 +1,13 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Theme Synchronization', () => {
-  test('toggle theme updates data-theme attribute and persists across reload', async ({ page }) => {
+  test('toggle theme updates data-theme attribute and persists across reload', async ({
+    page,
+  }) => {
     await page.goto('/');
     const htmlElement = page.locator('html');
-    const initialTheme = (await htmlElement.getAttribute('data-theme')) || 'light';
+    const initialTheme =
+      (await htmlElement.getAttribute('data-theme')) || 'light';
 
     const toggleButton = page.getByTestId('theme-toggle-button');
     await toggleButton.click();
@@ -17,7 +20,9 @@ test.describe('Theme Synchronization', () => {
     expect(reloadedTheme).toBe(newTheme);
   });
 
-  test('respects system dark mode preference on initial session', async ({ page }) => {
+  test('respects system dark mode preference on initial session', async ({
+    page,
+  }) => {
     await page.emulateMedia({ colorScheme: 'dark' });
     await page.goto('/');
     const htmlElement = page.locator('html');
