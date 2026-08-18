@@ -80,6 +80,10 @@ export const useAppStore = create<AppStoreState>()(
     }),
     {
       name: 'excalidraw-tabs-data',
+      // TODO: Do not use storage, use instead partialize and merge,
+      // but ensure to migrate from {tabs: '...', currentTabId: '...'}
+      // to zustand object { state : {tabs: '...', currentTabId: '...'}, version: 0}
+      // to avoid data lose from old users
       storage: {
         getItem: (name) => {
           const str = localStorage.getItem(name);
