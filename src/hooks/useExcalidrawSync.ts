@@ -18,11 +18,6 @@ export const useExcalidrawSync = () => {
   const [api, setApi] = useState<ExcalidrawImperativeAPI | null>(null);
 
   const isSwitchingTabRef = useRef(false);
-  const currentTabIdRef = useRef(currentTabId);
-
-  useEffect(() => {
-    currentTabIdRef.current = currentTabId;
-  }, [currentTabId]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -61,7 +56,7 @@ export const useExcalidrawSync = () => {
     ) => {
       if (isSwitchingTabRef.current) return;
 
-      const activeId = currentTabIdRef.current;
+      const activeId = useAppStore.getState().currentTabId;
       updateTab(activeId, {
         elements,
         appState: {

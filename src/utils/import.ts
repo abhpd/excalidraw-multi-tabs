@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import { decompressData } from './encode';
 
 export const getExcalidrawBoard = async (url: string) => {
@@ -8,17 +6,10 @@ export const getExcalidrawBoard = async (url: string) => {
   const jsonParam = new URLSearchParams(frag).get('json') || '';
   const [fileKey, privateKey] = jsonParam.split(',');
 
-  const response = (
-    await axios.get(`https://json.excalidraw.com/api/v2/${fileKey}`, {
-      responseType: 'arraybuffer',
-    })
-  ).data;
+  const response = await fetch(`https://json.excalidraw.com/api/v2/${fileKey}`);
+  const arrayBuffer = await response.arrayBuffer();
 
-  if (!(response instanceof ArrayBuffer)) {
-    throw new Error('Unexpected data');
-  }
-
-  const uint8Array = new Uint8Array(response);
+  const uint8Array = new Uint8Array(arrayBuffer);
 
   try {
     const { data: decompressedData } = await decompressData(uint8Array, {

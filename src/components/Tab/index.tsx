@@ -1,7 +1,6 @@
 import { useSortable } from '@dnd-kit/react/sortable';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 
 import { useAppStore } from '../../store';
 import type { ITab } from '../../types';
@@ -13,17 +12,10 @@ interface TabProps {
   index: number;
 }
 
-interface FormData {
-  title: string;
-}
-
 const Tab = ({ tab, index }: TabProps) => {
   const { currentTabId, setCurrentTabId, updateTab, deleteTab } = useAppStore();
   const [isEditing, setIsEditing] = useState(false);
-
-  const { register, handleSubmit, reset } = useForm<FormData>({
-    defaultValues: { title: tab.title },
-  });
+  const [title, setTitle] = useState(tab.title);
 
   const { ref, handleRef, isDragging } = useSortable({
     id: tab.id,
@@ -50,17 +42,18 @@ const Tab = ({ tab, index }: TabProps) => {
   const handleTitleClick = () => {
     if (!isActive) return;
     setIsEditing(true);
-    reset({ title: tab.title });
+    setTitle(tab.title);
   };
 
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsEditing(true);
-    reset({ title: tab.title });
+    setTitle(tab.title);
   };
 
-  const onSubmit = (data: FormData) => {
-    const trimmedTitle = data.title.trim();
+  const onSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const trimmedTitle = title.trim();
     if (trimmedTitle && trimmedTitle !== tab.title) {
       const newTab = { ...tab, title: trimmedTitle };
       updateTab(tab.id, newTab);
@@ -70,7 +63,7 @@ const Tab = ({ tab, index }: TabProps) => {
 
   const handleCancel = () => {
     setIsEditing(false);
-    reset({ title: tab.title });
+    setTitle(tab.title);
   };
 
   return (
@@ -103,13 +96,14 @@ const Tab = ({ tab, index }: TabProps) => {
         </span>
       )}
       {isEditing && (
-        <form onSubmit={handleSubmit(onSubmit)} className={styles.editForm}>
+        <form onSubmit={onSubmit} className={styles.editForm}>
           <input
-            {...register('title')}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             className={styles.titleInput}
             type="text"
             autoFocus
-            onBlur={handleSubmit(onSubmit)}
+            onBlur={() => onSubmit()}
             onKeyDown={(e) => {
               if (e.key === 'Escape') {
                 e.preventDefault();
