@@ -21,22 +21,6 @@ const Tab = ({ tab, index }: TabProps) => {
     id: tab.id,
     index,
     group: 'tabs',
-    accept: (source) => source.id !== tab.id,
-    collisionDetector: ({ droppable, dragOperation }) => {
-      const pointer = dragOperation.position.current;
-      const shape = droppable.shape;
-      if (!pointer || !shape) return null;
-
-      const rect = shape.boundingRectangle;
-      if (pointer.x >= rect.left && pointer.x <= rect.right) {
-        return { id: droppable.id, value: 1 };
-      }
-      const distX = Math.min(
-        Math.abs(pointer.x - rect.left),
-        Math.abs(pointer.x - rect.right),
-      );
-      return { id: droppable.id, value: -distX };
-    },
     disabled: isEditing,
   });
 
