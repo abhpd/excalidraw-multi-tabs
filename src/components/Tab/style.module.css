@@ -44,6 +44,12 @@
 }
 
 /* Color Palette - Light Mode */
+.tab[data-color="default"] {
+  --tab-bg-inactive: rgba(105, 101, 219, 0.12);
+  --tab-bg-hover: rgba(105, 101, 219, 0.20);
+  --tab-bg-active: var(--color-surface-primary-container, #e0dfff);
+  --tab-indicator: var(--color-primary, #6965db);
+}
 .tab[data-color="blue"] {
   --tab-bg-inactive: rgba(59, 130, 246, 0.14);
   --tab-bg-hover: rgba(59, 130, 246, 0.22);
@@ -82,6 +88,12 @@
 }
 
 /* Color Palette - Dark Mode */
+:global([data-theme="dark"]) .tab[data-color="default"] {
+  --tab-bg-inactive: rgba(123, 119, 242, 0.16);
+  --tab-bg-hover: rgba(123, 119, 242, 0.26);
+  --tab-bg-active: var(--color-surface-primary-container, #3c3a52);
+  --tab-indicator: var(--color-primary-hover, #7b77f2);
+}
 :global([data-theme="dark"]) .tab[data-color="blue"] {
   --tab-bg-inactive: rgba(96, 165, 250, 0.18);
   --tab-bg-hover: rgba(96, 165, 250, 0.28);

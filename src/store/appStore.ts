@@ -32,7 +32,7 @@ const defaultAppData: AppData = {
       title: 'Tab 1',
       elements: [],
       appState: {},
-      color: 'blue',
+      color: 'default',
     },
   ],
   currentTabId: 0,

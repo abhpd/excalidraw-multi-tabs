@@ -262,13 +262,13 @@ test.describe('Tab Management', () => {
   test('tab assigned color persists in storage and attributes across reload', async ({ page }) => {
     // Check initial tab has a data-color attribute
     const initialTab = page.getByTestId('tab').first();
-    await expect(initialTab).toHaveAttribute('data-color', /blue|emerald|amber|purple|rose|cyan/);
+    await expect(initialTab).toHaveAttribute('data-color', /default|blue|emerald|amber|purple|rose|cyan/);
     const initialColor = await initialTab.getAttribute('data-color');
 
     // Create a second tab and verify it gets a color
     await page.getByTestId('new-tab-button').click();
     const secondTab = page.getByTestId('tab').nth(1);
-    await expect(secondTab).toHaveAttribute('data-color', /blue|emerald|amber|purple|rose|cyan/);
+    await expect(secondTab).toHaveAttribute('data-color', /default|blue|emerald|amber|purple|rose|cyan/);
     const secondColor = await secondTab.getAttribute('data-color');
 
     // Reload page and verify colors persist

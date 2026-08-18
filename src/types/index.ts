@@ -3,8 +3,8 @@ import type { AppState } from '@excalidraw/excalidraw/types';
 
 export type AppTheme = 'light' | 'dark';
 
-export type TabColor = 'blue' | 'emerald' | 'amber' | 'purple' | 'rose' | 'cyan';
-export const TAB_COLORS: TabColor[] = ['blue', 'emerald', 'amber', 'purple', 'rose', 'cyan'];
+export type TabColor = 'default' | 'blue' | 'emerald' | 'amber' | 'purple' | 'rose' | 'cyan';
+export const TAB_COLORS: TabColor[] = ['default', 'blue', 'emerald', 'amber', 'purple', 'rose', 'cyan'];
 
 export const getRandomTabColor = (): TabColor => {
   return TAB_COLORS[Math.floor(Math.random() * TAB_COLORS.length)];

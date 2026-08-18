@@ -71,7 +71,7 @@ const Tab = ({ tab, index }: TabProps) => {
       ref={ref}
       data-testid="tab"
       data-tab-id={tab.id}
-      data-color={tab.color || 'blue'}
+      data-color={tab.color || 'default'}
       className={clsx(styles.tab, {
         [styles.active]: isActive,
         [styles.dragging]: isDragging,
