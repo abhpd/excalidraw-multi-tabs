@@ -2,7 +2,7 @@
   align-items: center;
   background-color: var(--tab-bg-inactive, transparent);
   border-radius: 5px;
-  border-left: 2.5px solid transparent;
+  border: 1.5px solid transparent;
   width: 80px;
   min-width: 80px;
   max-width: 80px;
@@ -29,7 +29,7 @@
 
   &.active {
     background-color: var(--tab-bg-active, var(--color-surface-primary-container));
-    border-left-color: var(--tab-indicator, var(--color-primary));
+    border-color: var(--tab-indicator, var(--color-primary));
     font-weight: 500;
 
     .dragHandle {
