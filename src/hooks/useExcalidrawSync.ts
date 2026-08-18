@@ -9,16 +9,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppStore } from '../store';
 import { useExcalidrawFilesStore } from '../store/excalidrawFiles';
 
-const resolveViewBackgroundColor = (
-  viewBgColor?: string,
-  activeTheme: AppTheme = 'light',
-) => {
-  if (!viewBgColor || viewBgColor === '#ffffff' || viewBgColor === '#121212') {
-    return activeTheme === 'dark' ? '#121212' : '#ffffff';
-  }
-  return viewBgColor;
-};
-
 export const useExcalidrawSync = () => {
   const currentTabId = useAppStore((s) => s.currentTabId);
   const theme = useAppStore((s) => s.theme);
@@ -47,10 +37,6 @@ export const useExcalidrawSync = () => {
         appState: {
           ...tab.appState,
           theme,
-          viewBackgroundColor: resolveViewBackgroundColor(
-            tab.appState.viewBackgroundColor,
-            theme,
-          ),
         } as Parameters<ExcalidrawImperativeAPI['updateScene']>[0]['appState'],
       });
       if (files && Object.keys(files).length > 0) {
@@ -99,10 +85,6 @@ export const useExcalidrawSync = () => {
         appState: {
           ...initialTab?.appState,
           theme,
-          viewBackgroundColor: resolveViewBackgroundColor(
-            initialTab?.appState?.viewBackgroundColor,
-            theme,
-          ),
         },
         files: await getFiles(),
       }),
