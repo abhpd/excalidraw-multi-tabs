@@ -2,7 +2,7 @@
   align-items: center;
   background-color: var(--tab-bg-inactive, transparent);
   border-radius: 5px;
-  border-left: 2.5px solid var(--tab-indicator-inactive, transparent);
+  border-left: 2.5px solid transparent;
   width: 80px;
   min-width: 80px;
   max-width: 80px;
@@ -48,42 +48,36 @@
   --tab-bg-inactive: rgba(59, 130, 246, 0.14);
   --tab-bg-hover: rgba(59, 130, 246, 0.22);
   --tab-bg-active: rgba(59, 130, 246, 0.32);
-  --tab-indicator-inactive: rgba(59, 130, 246, 0.45);
   --tab-indicator: #2563eb;
 }
 .tab[data-color="emerald"] {
   --tab-bg-inactive: rgba(16, 185, 129, 0.14);
   --tab-bg-hover: rgba(16, 185, 129, 0.22);
   --tab-bg-active: rgba(16, 185, 129, 0.32);
-  --tab-indicator-inactive: rgba(16, 185, 129, 0.45);
   --tab-indicator: #059669;
 }
 .tab[data-color="amber"] {
   --tab-bg-inactive: rgba(245, 158, 11, 0.15);
   --tab-bg-hover: rgba(245, 158, 11, 0.24);
   --tab-bg-active: rgba(245, 158, 11, 0.34);
-  --tab-indicator-inactive: rgba(245, 158, 11, 0.45);
   --tab-indicator: #d97706;
 }
 .tab[data-color="purple"] {
   --tab-bg-inactive: rgba(168, 85, 247, 0.14);
   --tab-bg-hover: rgba(168, 85, 247, 0.22);
   --tab-bg-active: rgba(168, 85, 247, 0.32);
-  --tab-indicator-inactive: rgba(168, 85, 247, 0.45);
   --tab-indicator: #9333ea;
 }
 .tab[data-color="rose"] {
   --tab-bg-inactive: rgba(244, 63, 94, 0.14);
   --tab-bg-hover: rgba(244, 63, 94, 0.22);
   --tab-bg-active: rgba(244, 63, 94, 0.32);
-  --tab-indicator-inactive: rgba(244, 63, 94, 0.45);
   --tab-indicator: #e11d48;
 }
 .tab[data-color="cyan"] {
   --tab-bg-inactive: rgba(6, 182, 212, 0.14);
   --tab-bg-hover: rgba(6, 182, 212, 0.22);
   --tab-bg-active: rgba(6, 182, 212, 0.32);
-  --tab-indicator-inactive: rgba(6, 182, 212, 0.45);
   --tab-indicator: #0891b2;
 }
 
@@ -92,42 +86,36 @@
   --tab-bg-inactive: rgba(96, 165, 250, 0.18);
   --tab-bg-hover: rgba(96, 165, 250, 0.28);
   --tab-bg-active: rgba(96, 165, 250, 0.40);
-  --tab-indicator-inactive: rgba(96, 165, 250, 0.50);
   --tab-indicator: #60a5fa;
 }
 :global([data-theme="dark"]) .tab[data-color="emerald"] {
   --tab-bg-inactive: rgba(52, 211, 153, 0.18);
   --tab-bg-hover: rgba(52, 211, 153, 0.28);
   --tab-bg-active: rgba(52, 211, 153, 0.40);
-  --tab-indicator-inactive: rgba(52, 211, 153, 0.50);
   --tab-indicator: #34d399;
 }
 :global([data-theme="dark"]) .tab[data-color="amber"] {
   --tab-bg-inactive: rgba(251, 191, 36, 0.18);
   --tab-bg-hover: rgba(251, 191, 36, 0.28);
   --tab-bg-active: rgba(251, 191, 36, 0.40);
-  --tab-indicator-inactive: rgba(251, 191, 36, 0.50);
   --tab-indicator: #fbbf24;
 }
 :global([data-theme="dark"]) .tab[data-color="purple"] {
   --tab-bg-inactive: rgba(192, 132, 252, 0.18);
   --tab-bg-hover: rgba(192, 132, 252, 0.28);
   --tab-bg-active: rgba(192, 132, 252, 0.40);
-  --tab-indicator-inactive: rgba(192, 132, 252, 0.50);
   --tab-indicator: #c084fc;
 }
 :global([data-theme="dark"]) .tab[data-color="rose"] {
   --tab-bg-inactive: rgba(251, 113, 133, 0.18);
   --tab-bg-hover: rgba(251, 113, 133, 0.28);
   --tab-bg-active: rgba(251, 113, 133, 0.40);
-  --tab-indicator-inactive: rgba(251, 113, 133, 0.50);
   --tab-indicator: #fb7185;
 }
 :global([data-theme="dark"]) .tab[data-color="cyan"] {
   --tab-bg-inactive: rgba(34, 211, 238, 0.18);
   --tab-bg-hover: rgba(34, 211, 238, 0.28);
   --tab-bg-active: rgba(34, 211, 238, 0.40);
-  --tab-indicator-inactive: rgba(34, 211, 238, 0.50);
   --tab-indicator: #22d3ee;
 }
 
