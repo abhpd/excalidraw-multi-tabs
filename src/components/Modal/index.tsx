@@ -18,7 +18,7 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
   };
 
   return (
-    <div className={style.overlay} onClick={handleOverlayClick}>
+    <div className={style.overlay} onClick={handleOverlayClick} data-testid="modal-overlay">
       <div className={style.modal}>{children}</div>
     </div>
   );

@@ -69,6 +69,8 @@ const Tab = ({ tab, index }: TabProps) => {
   return (
     <div
       ref={ref}
+      data-testid="tab"
+      data-tab-id={tab.id}
       className={clsx(styles.tab, {
         [styles.active]: isActive,
         [styles.dragging]: isDragging,
@@ -78,6 +80,7 @@ const Tab = ({ tab, index }: TabProps) => {
       <button
         ref={handleRef}
         type="button"
+        data-testid="tab-drag-handle"
         className={styles.dragHandle}
         title="Drag to reorder tab"
         aria-label="Drag to reorder tab"
@@ -87,6 +90,7 @@ const Tab = ({ tab, index }: TabProps) => {
 
       {!isEditing && (
         <span
+          data-testid="tab-title"
           className={clsx(styles.title, { [styles.active]: isActive })}
           onClick={handleTitleClick}
           onDoubleClick={handleDoubleClick}
@@ -98,6 +102,7 @@ const Tab = ({ tab, index }: TabProps) => {
       {isEditing && (
         <form onSubmit={onSubmit} className={styles.editForm}>
           <input
+            data-testid="tab-title-input"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className={styles.titleInput}
@@ -116,6 +121,7 @@ const Tab = ({ tab, index }: TabProps) => {
       {isActive && (
         <button
           type="button"
+          data-testid="tab-delete-button"
           className={styles.deleteButton}
           onClick={handleDelete}
           title="Delete tab"

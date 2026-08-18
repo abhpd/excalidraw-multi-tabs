@@ -72,6 +72,7 @@ const ImportModal = () => {
       <button
         className={styles.loadButton}
         onClick={() => setIsModalOpen(true)}
+        data-testid="import-modal-button"
       >
         Import from Excalidraw
       </button>
@@ -85,6 +86,7 @@ const ImportModal = () => {
             </p>
             <input
               type="text"
+              data-testid="import-url-input"
               value={url}
               onChange={(e) => {
                 setUrl(e.target.value);
@@ -101,7 +103,7 @@ const ImportModal = () => {
                 onSubmit(undefined, pastedValue);
               }}
             />
-            {error && <p className={styles.error}>{error}</p>}
+            {error && <p className={styles.error} data-testid="import-error-message">{error}</p>}
           </div>
         </form>
       </Modal>

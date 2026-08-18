@@ -16,6 +16,8 @@
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "preview": "pnpm run build && wrangler dev",
     "deploy": "pnpm run build && wrangler deploy"
   },
@@ -38,6 +40,7 @@
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.47.0",
     "@eslint/js": "^9.36.0",
+    "@playwright/test": "^1.62.1",
     "@types/node": "^24.5.2",
     "@types/pako": "^2.0.4",
     "@types/react": "^19.1.13",

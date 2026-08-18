@@ -31,7 +31,7 @@ const TabBar = () => {
 
   return (
     <>
-      <div className={style.container}>
+      <div className={style.container} data-testid="tab-bar-container">
         <DragDropProvider
           onDragEnd={handleDragEnd}
           modifiers={[
@@ -39,7 +39,7 @@ const TabBar = () => {
             RestrictToElement.configure({ element: tabBarRef.current }),
           ]}
         >
-          <div className={style.tabBar} ref={tabBarRef}>
+          <div className={style.tabBar} ref={tabBarRef} data-testid="tab-bar">
             {tabs.map((tab, index) => (
               <Tab key={tab.id} tab={tab} index={index} />
             ))}
@@ -50,6 +50,7 @@ const TabBar = () => {
           onClick={handleCreateTabBtnClick}
           title="New Tab"
           aria-label="New Tab"
+          data-testid="new-tab-button"
         >
           <PlusIcon />
         </button>
@@ -59,6 +60,7 @@ const TabBar = () => {
             onClick={toggleTheme}
             title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            data-testid="theme-toggle-button"
           >
             {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
           </button>
