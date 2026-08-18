@@ -10,14 +10,20 @@ import { useAppStore } from '../store';
 import { useExcalidrawFilesStore } from '../store/excalidrawFiles';
 
 export const useExcalidrawSync = () => {
-  const { currentTabId, updateTab } = useAppStore();
-  const { setFiles, getFiles } = useExcalidrawFilesStore();
+  const currentTabId = useAppStore((s) => s.currentTabId);
+  const theme = useAppStore((s) => s.theme);
+  const updateTab = useAppStore((s) => s.updateTab);
 
+  const { setFiles, getFiles } = useExcalidrawFilesStore();
   const [api, setApi] = useState<ExcalidrawImperativeAPI | null>(null);
 
-  const isSwitchingTabRef = useRef(true);
+  const isSwitchingTabRef = useRef(false);
 
-  // Tab switch: swap scene in-place without destroying the canvas DOM
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  // Tab switch or theme change: swap scene in-place without destroying the canvas DOM
   useEffect(() => {
     if (!api) return;
     const tab = useAppStore.getState().tabs.find((t) => t.id === currentTabId);
@@ -28,9 +34,10 @@ export const useExcalidrawSync = () => {
     getFiles().then((files) => {
       api.updateScene({
         elements: tab.elements,
-        appState: tab.appState as Parameters<
-          ExcalidrawImperativeAPI['updateScene']
-        >[0]['appState'],
+        appState: {
+          ...tab.appState,
+          theme,
+        } as Parameters<ExcalidrawImperativeAPI['updateScene']>[0]['appState'],
       });
       if (files && Object.keys(files).length > 0) {
         api.addFiles(Object.values(files));
@@ -39,7 +46,7 @@ export const useExcalidrawSync = () => {
         isSwitchingTabRef.current = false;
       }, 60);
     });
-  }, [currentTabId, api, getFiles]);
+  }, [currentTabId, api, theme, getFiles]);
 
   const onChange = useCallback(
     (
@@ -50,6 +57,7 @@ export const useExcalidrawSync = () => {
       if (isSwitchingTabRef.current) return;
 
       const activeId = useAppStore.getState().currentTabId;
+
       updateTab(activeId, {
         elements,
         appState: {
@@ -67,6 +75,7 @@ export const useExcalidrawSync = () => {
   return {
     excalidrawProps: {
       excalidrawAPI: setApi,
+      theme,
       onChange,
       initialData: async () => {
         const activeId = useAppStore.getState().currentTabId;
@@ -75,7 +84,10 @@ export const useExcalidrawSync = () => {
           useAppStore.getState().tabs[0];
         return {
           elements: currentTab?.elements || [],
-          appState: currentTab?.appState,
+          appState: {
+            ...currentTab?.appState,
+            theme,
+          },
           files: await getFiles(),
         };
       },

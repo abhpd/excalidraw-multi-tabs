@@ -1,15 +1,46 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { AppData, ITab } from '../types';
+import {
+  type AppData,
+  type AppTheme,
+  getRandomTabColor,
+  type ITab,
+} from '../types';
 
 interface AppStoreState extends AppData {
+  theme: AppTheme;
+  setTheme: (theme: AppTheme) => void;
+  toggleTheme: () => void;
   setCurrentTabId: (id: number) => void;
   createTab: () => number;
   updateTab: (id: number, updatedTab: Partial<ITab>) => void;
   setTabs: (tabs: ITab[]) => void;
   deleteTab: (tabId: number) => void;
 }
+
+const getInitialTheme = (): AppTheme => {
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem('excalidraw-tabs-data');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.theme === 'dark' || parsed.theme === 'light') {
+          return parsed.theme;
+        }
+      }
+    } catch {
+      // ignore invalid localStorage JSON
+    }
+    if (
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    ) {
+      return 'dark';
+    }
+  }
+  return 'light';
+};
 
 const defaultAppData: AppData = {
   tabs: [
@@ -18,6 +49,7 @@ const defaultAppData: AppData = {
       title: 'Tab 1',
       elements: [],
       appState: {},
+      color: 'default',
     },
   ],
   currentTabId: 0,
@@ -28,6 +60,14 @@ export const useAppStore = create<AppStoreState>()(
     (set) => ({
       tabs: defaultAppData.tabs,
       currentTabId: defaultAppData.currentTabId,
+      theme: getInitialTheme(),
+
+      setTheme: (theme: AppTheme) => set({ theme }),
+
+      toggleTheme: () =>
+        set((state) => ({
+          theme: state.theme === 'dark' ? 'light' : 'dark',
+        })),
 
       setCurrentTabId: (id: number) => set({ currentTabId: id }),
 
@@ -45,6 +85,7 @@ export const useAppStore = create<AppStoreState>()(
             title: `Tab ${newTabId + 1}`,
             elements: [],
             appState: {},
+            color: getRandomTabColor(),
           };
 
           return { tabs: [...state.tabs, newTab] };
@@ -80,10 +121,6 @@ export const useAppStore = create<AppStoreState>()(
     }),
     {
       name: 'excalidraw-tabs-data',
-      // TODO: Do not use storage, use instead partialize and merge,
-      // but ensure to migrate from {tabs: '...', currentTabId: '...'}
-      // to zustand object { state : {tabs: '...', currentTabId: '...'}, version: 0}
-      // to avoid data lose from old users
       storage: {
         getItem: (name) => {
           const str = localStorage.getItem(name);
@@ -93,12 +130,16 @@ export const useAppStore = create<AppStoreState>()(
             return {
               state: {
                 tabs: Array.isArray(data.tabs)
-                  ? data.tabs
+                  ? data.tabs.map((tab: ITab) => ({
+                      ...tab,
+                      color: tab.color || 'default',
+                    }))
                   : defaultAppData.tabs,
                 currentTabId:
                   typeof data.currentTabId === 'number'
                     ? data.currentTabId
                     : defaultAppData.currentTabId,
+                theme: data.theme || getInitialTheme(),
               },
               version: 0,
             };
@@ -112,6 +153,7 @@ export const useAppStore = create<AppStoreState>()(
             JSON.stringify({
               tabs: value.state.tabs,
               currentTabId: value.state.currentTabId,
+              theme: value.state.theme,
             }),
           );
         },
