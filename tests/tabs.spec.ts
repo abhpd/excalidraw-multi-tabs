@@ -258,4 +258,27 @@ test.describe('Tab Management', () => {
     await expect(page.getByTestId('tab').nth(0).getByTestId('tab-title')).toHaveText('Extremely Long Diagram Name For System Architecture');
     await expect(page.getByTestId('tab').nth(1).getByTestId('tab-title')).toHaveText('A');
   });
+
+  test('tab assigned color persists in storage and attributes across reload', async ({ page }) => {
+    // Check initial tab has a data-color attribute
+    const initialTab = page.getByTestId('tab').first();
+    await expect(initialTab).toHaveAttribute('data-color', /blue|emerald|amber|purple|rose|cyan/);
+    const initialColor = await initialTab.getAttribute('data-color');
+
+    // Create a second tab and verify it gets a color
+    await page.getByTestId('new-tab-button').click();
+    const secondTab = page.getByTestId('tab').nth(1);
+    await expect(secondTab).toHaveAttribute('data-color', /blue|emerald|amber|purple|rose|cyan/);
+    const secondColor = await secondTab.getAttribute('data-color');
+
+    // Reload page and verify colors persist
+    await page.reload();
+    await expect(page.getByTestId('tab')).toHaveCount(2);
+
+    const reloadedTab1 = page.getByTestId('tab').first();
+    const reloadedTab2 = page.getByTestId('tab').nth(1);
+
+    await expect(reloadedTab1).toHaveAttribute('data-color', initialColor!);
+    await expect(reloadedTab2).toHaveAttribute('data-color', secondColor!);
+  });
 });

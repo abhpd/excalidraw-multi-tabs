@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { useAppStore } from '../../store';
-import type { ITab } from '../../types';
+import { getRandomTabColor, type ITab } from '../../types';
 import { getExcalidrawBoard } from '../../utils/import';
 import Modal from '../Modal';
 import styles from './styles.module.css';
@@ -51,6 +51,7 @@ const ImportModal = () => {
         appState: {
           viewBackgroundColor: excalidrawBoard.appState.viewBackgroundColor,
         },
+        color: getRandomTabColor(),
       };
 
       updateTab(newTabId, newTabData);

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { AppData, AppTheme, ITab } from '../types';
+import { type AppData, type AppTheme, getRandomTabColor, type ITab } from '../types';
 
 interface AppStoreState extends AppData {
   theme: AppTheme;
@@ -32,6 +32,7 @@ const defaultAppData: AppData = {
       title: 'Tab 1',
       elements: [],
       appState: {},
+      color: 'blue',
     },
   ],
   currentTabId: 0,
@@ -66,6 +67,7 @@ export const useAppStore = create<AppStoreState>()(
             title: `Tab ${newTabId + 1}`,
             elements: [],
             appState: {},
+            color: getRandomTabColor(),
           };
 
           return { tabs: [...state.tabs, newTab] };
