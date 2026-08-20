@@ -1,63 +1,186 @@
 .tab {
   align-items: center;
-  background-color: transparent;
-  border-radius: 6px;
+  background-color: var(--tab-bg-inactive, transparent);
+  border-radius: 5px;
+  border: 1.5px solid transparent;
+  width: fit-content;
   min-width: 80px;
-  max-width: 300px;
-  cursor: grab;
+  max-width: 120px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  cursor: pointer;
   display: flex;
   font-weight: 400;
-  gap: 10px;
+  gap: 3px;
   font-size: 12px;
   height: 36px;
-  padding: 10px;
+  padding: 0 4px 0 3px;
   user-select: none;
-  color: #1b1b1f; /*--text-primary-color*/
+  color: var(--text-primary-color);
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
-    background-color: #f1f0ff; /*--button-hover-bg*/
+    background-color: var(--tab-bg-hover, var(--button-hover-bg));
+
+    .dragHandle {
+      opacity: 0.6;
+    }
   }
 
   &.active {
-    background-color: #e0dfff; /*--color-surface-primary-container*/
+    background-color: var(
+      --tab-bg-active,
+      var(--color-surface-primary-container)
+    );
+    border-color: var(--tab-indicator, var(--color-primary));
+    font-weight: 500;
+
+    .dragHandle {
+      opacity: 0.75;
+    }
   }
 
   &.dragging {
-    opacity: 0.5;
-    z-index: 1;
+    opacity: 0.4;
+    z-index: 10;
   }
 
-  & button {
-    border-radius: 4px;
-    cursor: pointer;
-    padding: 4px;
+  &.default {
+    --tab-bg-inactive: var(--tab-default-bg-inactive);
+    --tab-bg-hover: var(--tab-default-bg-hover);
+    --tab-bg-active: var(--tab-default-bg-active);
+    --tab-indicator: var(--tab-default-indicator);
+  }
 
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.1);
-    }
+  &.blue {
+    --tab-bg-inactive: var(--tab-blue-bg-inactive);
+    --tab-bg-hover: var(--tab-blue-bg-hover);
+    --tab-bg-active: var(--tab-blue-bg-active);
+    --tab-indicator: var(--tab-blue-indicator);
+  }
+
+  &.emerald {
+    --tab-bg-inactive: var(--tab-emerald-bg-inactive);
+    --tab-bg-hover: var(--tab-emerald-bg-hover);
+    --tab-bg-active: var(--tab-emerald-bg-active);
+    --tab-indicator: var(--tab-emerald-indicator);
+  }
+
+  &.amber {
+    --tab-bg-inactive: var(--tab-amber-bg-inactive);
+    --tab-bg-hover: var(--tab-amber-bg-hover);
+    --tab-bg-active: var(--tab-amber-bg-active);
+    --tab-indicator: var(--tab-amber-indicator);
+  }
+
+  &.purple {
+    --tab-bg-inactive: var(--tab-purple-bg-inactive);
+    --tab-bg-hover: var(--tab-purple-bg-hover);
+    --tab-bg-active: var(--tab-purple-bg-active);
+    --tab-indicator: var(--tab-purple-indicator);
+  }
+
+  &.rose {
+    --tab-bg-inactive: var(--tab-rose-bg-inactive);
+    --tab-bg-hover: var(--tab-rose-bg-hover);
+    --tab-bg-active: var(--tab-rose-bg-active);
+    --tab-indicator: var(--tab-rose-indicator);
+  }
+
+  &.cyan {
+    --tab-bg-inactive: var(--tab-cyan-bg-inactive);
+    --tab-bg-hover: var(--tab-cyan-bg-hover);
+    --tab-bg-active: var(--tab-cyan-bg-active);
+    --tab-indicator: var(--tab-cyan-indicator);
+  }
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary-color);
+  opacity: 0.25;
+  cursor: grab;
+  border-radius: 3px;
+  padding: 0;
+  flex-shrink: 0;
+  transition:
+    opacity 0.15s ease,
+    background-color 0.15s ease;
+
+  &:hover {
+    opacity: 1 !important;
+    background-color: var(--sidebar-border-color);
+  }
+
+  &:active {
+    cursor: grabbing;
+    opacity: 1 !important;
   }
 }
 
 .title {
   flex: 1;
+  min-width: 0;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  cursor: pointer;
+  line-height: 28px;
+}
 
-  &.active {
-    cursor: text;
-  }
+.editForm {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
 }
 
 .titleInput {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-primary-color);
+  border: 1px solid var(--input-border);
+  border-radius: 3px;
   width: 100%;
+  min-width: 0;
   outline: none;
-  padding: 2px 4px;
+  padding: 1px 4px;
+  font-size: 12px;
+  height: 22px;
 
   &:focus {
-    border-color: #6965db;
+    border-color: var(--color-primary);
+  }
+}
+
+.deleteButton {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary-color);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.55;
+  flex-shrink: 0;
+  transition:
+    opacity 0.15s ease,
+    background-color 0.15s ease;
+
+  &:hover {
+    opacity: 1;
+    background-color: var(--sidebar-border-color);
   }
 }

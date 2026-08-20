@@ -1,15 +1,38 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { AppData, ITab } from '../types';
+import { type AppData, type AppTheme, type ITab } from '../types';
+import { getRandomTabColor } from '../utils/colors';
 
 interface AppStoreState extends AppData {
+  theme: AppTheme;
+  setTheme: (theme: AppTheme) => void;
+  toggleTheme: () => void;
   setCurrentTabId: (id: number) => void;
   createTab: () => number;
   updateTab: (id: number, updatedTab: Partial<ITab>) => void;
   setTabs: (tabs: ITab[]) => void;
   deleteTab: (tabId: number) => void;
 }
+
+const getSystemTheme = (): AppTheme =>
+  window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+const getInitialTheme = (): AppTheme => {
+  if (typeof window === 'undefined') return 'light';
+
+  try {
+    const raw = localStorage.getItem('excalidraw-tabs-data');
+    if (!raw) return getSystemTheme();
+
+    const theme = JSON.parse(raw).theme;
+    if (['light', 'dark'].includes(theme)) return theme;
+
+    return getSystemTheme();
+  } catch {
+    return getSystemTheme();
+  }
+};
 
 const defaultAppData: AppData = {
   tabs: [
@@ -18,6 +41,7 @@ const defaultAppData: AppData = {
       title: 'Tab 1',
       elements: [],
       appState: {},
+      color: 'default',
     },
   ],
   currentTabId: 0,
@@ -28,6 +52,14 @@ export const useAppStore = create<AppStoreState>()(
     (set) => ({
       tabs: defaultAppData.tabs,
       currentTabId: defaultAppData.currentTabId,
+      theme: getInitialTheme(),
+
+      setTheme: (theme: AppTheme) => set({ theme }),
+
+      toggleTheme: () =>
+        set((state) => ({
+          theme: state.theme === 'dark' ? 'light' : 'dark',
+        })),
 
       setCurrentTabId: (id: number) => set({ currentTabId: id }),
 
@@ -45,6 +77,7 @@ export const useAppStore = create<AppStoreState>()(
             title: `Tab ${newTabId + 1}`,
             elements: [],
             appState: {},
+            color: getRandomTabColor(),
           };
 
           return { tabs: [...state.tabs, newTab] };
@@ -99,6 +132,7 @@ export const useAppStore = create<AppStoreState>()(
                   typeof data.currentTabId === 'number'
                     ? data.currentTabId
                     : defaultAppData.currentTabId,
+                theme: data.theme || getInitialTheme(),
               },
               version: 0,
             };
@@ -112,6 +146,7 @@ export const useAppStore = create<AppStoreState>()(
             JSON.stringify({
               tabs: value.state.tabs,
               currentTabId: value.state.currentTabId,
+              theme: value.state.theme,
             }),
           );
         },
