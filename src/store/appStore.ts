@@ -126,10 +126,7 @@ export const useAppStore = create<AppStoreState>()(
             return {
               state: {
                 tabs: Array.isArray(data.tabs)
-                  ? data.tabs.map((tab: ITab) => ({
-                      ...tab,
-                      color: tab.color || 'default',
-                    }))
+                  ? data.tabs
                   : defaultAppData.tabs,
                 currentTabId:
                   typeof data.currentTabId === 'number'
