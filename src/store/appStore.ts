@@ -1,12 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import {
-  type AppData,
-  type AppTheme,
-  getRandomTabColor,
-  type ITab,
-} from '../types';
+import { type AppData, type AppTheme, type ITab } from '../types';
+import { getRandomTabColor } from '../utils/colors';
 
 interface AppStoreState extends AppData {
   theme: AppTheme;
@@ -19,27 +15,23 @@ interface AppStoreState extends AppData {
   deleteTab: (tabId: number) => void;
 }
 
+const getSystemTheme = (): AppTheme =>
+  window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
 const getInitialTheme = (): AppTheme => {
-  if (typeof window !== 'undefined') {
-    try {
-      const raw = localStorage.getItem('excalidraw-tabs-data');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed.theme === 'dark' || parsed.theme === 'light') {
-          return parsed.theme;
-        }
-      }
-    } catch {
-      // ignore invalid localStorage JSON
-    }
-    if (
-      window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches
-    ) {
-      return 'dark';
-    }
+  if (typeof window === 'undefined') return 'light';
+
+  try {
+    const raw = localStorage.getItem('excalidraw-tabs-data');
+    if (!raw) return getSystemTheme();
+
+    const theme = JSON.parse(raw).theme;
+    if (['light', 'dark'].includes(theme)) return theme;
+
+    return getSystemTheme();
+  } catch {
+    return getSystemTheme();
   }
-  return 'light';
 };
 
 const defaultAppData: AppData = {
