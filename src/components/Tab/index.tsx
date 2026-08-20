@@ -102,7 +102,7 @@ const Tab = ({ tab, index }: TabProps) => {
             className={styles.titleInput}
             type="text"
             autoFocus
-            onBlur={() => onSubmit()}
+            onBlur={onSubmit}
             onKeyDown={(e) => {
               if (e.key === 'Escape') {
                 e.preventDefault();

@@ -10,11 +10,9 @@ import { useAppStore } from '../store';
 import { useExcalidrawFilesStore } from '../store/excalidrawFiles';
 
 export const useExcalidrawSync = () => {
-  const currentTabId = useAppStore((s) => s.currentTabId);
-  const theme = useAppStore((s) => s.theme);
-  const updateTab = useAppStore((s) => s.updateTab);
-
+  const { currentTabId, updateTab, theme } = useAppStore();
   const { setFiles, getFiles } = useExcalidrawFilesStore();
+
   const [api, setApi] = useState<ExcalidrawImperativeAPI | null>(null);
 
   const isSwitchingTabRef = useRef(false);
