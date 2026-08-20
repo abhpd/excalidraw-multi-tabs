@@ -5,8 +5,9 @@
 
 A self-hostable version of Excalidraw with multi-tab support for enhanced drawing workflow.
 
+A publicly deployed version is also available: [excalidraw.jorgemon-lopez.workers.dev](https://excalidraw.jorgemon-lopez.workers.dev/)
 
-![Excalidraw Multi-Tabs Screenshot](https://i.ibb.co/TDcPRRzF/screely-1759180368656.png)
+![Excalidraw Multi-Tabs Screenshot](https://i.ibb.co/gbPWrPw9/screely-edit.png)
 
 ## 🎨 Features
 
