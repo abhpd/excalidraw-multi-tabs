@@ -2,8 +2,6 @@
   display: flex;
   align-items: center;
   padding: 2px 6px;
-  height: 32px;
-  min-height: 32px;
   background-color: var(--island-bg-color);
   border-bottom: 1px solid var(--sidebar-border-color);
   font-family: Assistant, sans-serif;
@@ -32,9 +30,9 @@
   cursor: pointer;
   display: flex;
   justify-content: center;
-  height: 26px;
-  width: 26px;
-  min-width: 26px;
+  height: 36px;
+  width: 36px;
+  min-width: 36px;
   padding: 2px;
   user-select: none;
   transition: background-color 0.15s ease;
@@ -60,9 +58,9 @@
   cursor: pointer;
   display: flex;
   justify-content: center;
-  height: 26px;
-  width: 26px;
-  min-width: 26px;
+  height: 34px;
+  width: 34px;
+  min-width: 34px;
   padding: 2px;
   user-select: none;
   transition:

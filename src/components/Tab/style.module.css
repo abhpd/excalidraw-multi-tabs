@@ -3,9 +3,9 @@
   background-color: var(--tab-bg-inactive, transparent);
   border-radius: 5px;
   border: 1.5px solid transparent;
-  width: 80px;
+  width: fit-content;
   min-width: 80px;
-  max-width: 80px;
+  max-width: 120px;
   flex-shrink: 0;
   box-sizing: border-box;
   cursor: pointer;
@@ -13,7 +13,7 @@
   font-weight: 400;
   gap: 3px;
   font-size: 12px;
-  height: 28px;
+  height: 36px;
   padding: 0 4px 0 3px;
   user-select: none;
   color: var(--text-primary-color);
