@@ -1,7 +1,10 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
+import { type SubmitHandler, useForm } from 'react-hook-form';
+import z from 'zod';
 
 import { useAppStore } from '../../store';
-import { getRandomTabColor, type ITab } from '../../types';
+import type { ITab } from '../../types';
 import { getExcalidrawBoard } from '../../utils/import';
 import Modal from '../Modal';
 import styles from './styles.module.css';
@@ -9,31 +12,40 @@ import styles from './styles.module.css';
 const EXCALIDRAW_URL = 'https://excalidraw.com/#json=';
 const INVALID_EXCALIDRAW_LINK = 'Invalid Excalidraw link';
 
+interface InputForm {
+  excalidrawUrl: string;
+}
+
+const schema = z.object({
+  excalidrawUrl: z
+    .url({ message: INVALID_EXCALIDRAW_LINK })
+    .startsWith(EXCALIDRAW_URL, { message: INVALID_EXCALIDRAW_LINK }),
+});
+
 const ImportModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [url, setUrl] = useState('');
-  const [error, setError] = useState('');
 
   const { createTab, updateTab, setCurrentTabId } = useAppStore();
 
+  const {
+    handleSubmit,
+    register,
+    reset,
+    setValue,
+    setError,
+    formState: { errors },
+  } = useForm<InputForm>({
+    resolver: zodResolver(schema),
+  });
+
   const handleModalClose = () => {
     setIsModalOpen(false);
-    setUrl('');
-    setError('');
+    reset();
   };
 
-  const onSubmit = async (e?: React.FormEvent, urlToSubmit?: string) => {
-    if (e) e.preventDefault();
-
-    const targetUrl = urlToSubmit || url;
-
-    if (!targetUrl.startsWith(EXCALIDRAW_URL)) {
-      setError(INVALID_EXCALIDRAW_LINK);
-      return;
-    }
-
+  const onSubmit: SubmitHandler<InputForm> = async ({ excalidrawUrl }) => {
     try {
-      const excalidrawBoard = await getExcalidrawBoard(targetUrl);
+      const excalidrawBoard = await getExcalidrawBoard(excalidrawUrl);
 
       const newTabId = createTab();
 
@@ -44,20 +56,22 @@ const ImportModal = () => {
         appState: {
           viewBackgroundColor: excalidrawBoard.appState.viewBackgroundColor,
         },
-        color: getRandomTabColor(),
       };
 
       updateTab(newTabId, newTabData);
       setCurrentTabId(newTabId);
       setIsModalOpen(false);
-      setUrl('');
-      setError('');
-    } catch (err) {
+      reset();
+    } catch (error) {
       let errorMsg = 'Failed to load Excalidraw board. Unknown error';
-      if (err instanceof Error && err.message) {
-        errorMsg = err.message;
+      if (error instanceof Error && error.message) {
+        errorMsg = error.message;
       }
-      setError(errorMsg);
+
+      setError('excalidrawUrl', {
+        type: 'manual',
+        message: errorMsg,
+      });
     }
   };
 
@@ -66,12 +80,11 @@ const ImportModal = () => {
       <button
         className={styles.loadButton}
         onClick={() => setIsModalOpen(true)}
-        data-testid="import-modal-button"
       >
         Import from Excalidraw
       </button>
       <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <h2 className={styles.title}>Import from Excalidraw</h2>
           <div className={styles.body}>
             <p>
@@ -80,28 +93,18 @@ const ImportModal = () => {
             </p>
             <input
               type="text"
-              data-testid="import-url-input"
-              value={url}
-              onChange={(e) => {
-                setUrl(e.target.value);
-                setError('');
-              }}
+              {...register('excalidrawUrl')}
               className={styles.input}
               autoFocus={true}
               placeholder={EXCALIDRAW_URL}
               onPaste={(e) => {
                 e.preventDefault();
                 const pastedValue = e.clipboardData.getData('text');
-                setUrl(pastedValue);
-                setError('');
-                onSubmit(undefined, pastedValue);
+                setValue('excalidrawUrl', pastedValue);
+                handleSubmit(onSubmit)();
               }}
             />
-            {error && (
-              <p className={styles.error} data-testid="import-error-message">
-                {error}
-              </p>
-            )}
+            <p className={styles.error}>{errors.excalidrawUrl?.message}</p>
           </div>
         </form>
       </Modal>
